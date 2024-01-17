@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <title>AJAX</title>
+</head>
+
+<body>
+
+    <div class="container mt-5 border border-dark p-5">
+        <div class="container" id="forTable">
+            <table class="table p-5 mb-2 mt-3" style="box-shadow: 2px 2px 2px 2px ;">
+                <button type="button" id="cross" class="btn btn-danger">Back</button>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">City</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="container" id="showData">
+            <center>
+                <h2 class="mb-4">Register Data</h2>
+            </center>
+
+            <!-- method and action is optional -->
+
+            <form class="p-4 mb-2" method="post" action="index.html" style="box-shadow: 2px 2px 2px 2px ;"> 
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Gender:</label>
+                    <input type="text" name="gender" id="gender" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Age:</label>
+                    <input type="number" name="age" id="age" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">City:</label>
+                    <input type="text" name="city" id="city" class="form-control">
+                </div>
+
+                <button type="submit" id="postData" class="btn btn-danger">Submit</button>
+                <button type="button" class="btn btn-primary" id="fetchData">Show data</button>
+
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            $("#forTable").css('display', 'none');
+            $("#fetchData").click(function () {
+                $("#forTable").slideToggle('slow');
+                $("#showData").css('display', 'none');
+                console.log("Fetch button clicked");
+                $.get("http://localhost:8080/allStudents", makeOutput);
+            });
+
+            function makeOutput(data, status) {
+                const realData = data.data;
+                for (let a of realData) {
+                    var tRow = "<tr>" + "<td>" + a.studId + "</td>" + "<td>" + a.studName + "</td>" + "<td>" + a.studGender + "</td>" + "<td>" + a.studAge + "</td>" + "<td>" + a.studAge + "</td>" + "</tr>";
+                    $("#tbody").append(tRow);
+                    // document.write(JSON.stringify(a));
+                }
+            }
+
+
+            $("#postData").click(function () {
+                console.log("post button clicked");
+                var realData = {
+                    studName: $("#name").val(),
+                    studGender: $("#gender").val(),
+                    studAge: $("#age").val(),
+                    studCity: $("#city").val()
+                }
+                $.post({
+                    url: "http://localhost:8080/addStudent",
+                    contentType: "application/json",
+                    data: JSON.stringify(realData)
+                }).done(function (data) {
+                    window.location = "index.html";
+                });
+
+            });
+            $("#cross").click(function () {
+                $("#forTable").css("display", "none");
+                $("#showData").slideDown("slow");
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>
